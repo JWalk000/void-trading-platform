@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  
+  // Relations
+  brokerConnections BrokerConnection[]
+  tradingPositions  TradingPosition[]
+  tradeHistory      TradeHistory[]
+  tradingStrategies TradingStrategy[]
+  strategyExecutions StrategyExecution[]
+}
+
+model BrokerConnection {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  broker    String   // "binance", "coinbase", "kraken", etc.
+  apiKey    String
+  secretKey String
+  passphrase String? // For Coinbase Pro
+  baseUrl   String?  // For custom APIs
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TradingPosition {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  symbol    String   // e.g., "BTC/USDT"
+  side      String   // "long" or "short"
+  size      Float
+  entryPrice Float
+  currentPrice Float
+  pnl       Float    @default(0)
+  pnlPercent Float   @default(0)
+  isOpen    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TradeHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  symbol    String
+  side      String   // "buy" or "sell"
+  size      Float
+  price     Float
+  total     Float
+  fee       Float    @default(0)
+  timestamp DateTime @default(now())
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TradingStrategy {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  name        String
+  description String?
+  isActive    Boolean  @default(false)
+  symbol      String   // e.g., "BTC/USDT"
+  timeframe   String   // "1m", "5m", "15m", "1h", "4h", "1d"
+  
+  // Strategy Parameters
+  strategyType String  // "RSI", "MACD", "BOLLINGER", "CUSTOM"
+  parameters   String  // JSON string of strategy parameters
+  
+  // Risk Management
+  maxPositionSize Float
+  stopLossPercent Float?
+  takeProfitPercent Float?
+  maxDailyLoss    Float?
+  
+  // Execution Settings
+  brokerConnectionId Int
+  autoExecute       Boolean @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  strategyExecutions StrategyExecution[]
+}
+
+model StrategyExecution {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  strategyId  Int
+  symbol      String
+  action      String   // "BUY", "SELL", "HOLD"
+  signal      String   // Technical analysis signal
+  price       Float?
+  size        Float?
+  executed    Boolean  @default(false)
+  executedAt  DateTime?
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  strategy TradingStrategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+}

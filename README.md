@@ -1,59 +1,83 @@
-# AI Trading Platform
+# VOID Trading Platform
 
-An intelligent trading platform that executes trades based on parameters and external factors, with self-learning capabilities from previous trades.
+A modern, AI-powered trading automation platform built with Next.js, React, and Tailwind CSS.
 
 ## Features
 
-- **Parameter-based Trading**: Configure trading parameters and strategies
-- **External Factor Integration**: Incorporate market data, news, and economic indicators
-- **Self-Learning AI**: Machine learning models that learn from trade outcomes
-- **Real-time Monitoring**: Live dashboard for trade tracking and performance
-- **Risk Management**: Built-in risk controls and position sizing
-- **Backtesting**: Test strategies against historical data
+- 🧠 AI-powered trading automation
+- 📊 Real-time market monitoring
+- 🛡️ Built-in risk management
+- 📱 Responsive design
+- ⚡ Fast performance
+
+## Tech Stack
+
+- **Framework**: Next.js 14 with App Router
+- **UI Library**: React 18
+- **Styling**: Tailwind CSS
+- **Components**: shadcn/ui
+- **Icons**: Lucide React
+- **Language**: TypeScript
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Run the development server:
+```bash
+npm run dev
+```
+
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Project Structure
 
 ```
-├── frontend/          # React frontend application
-├── backend/           # Python Flask API
-├── ml_models/         # Machine learning models
-├── data/              # Data storage and processing
-├── config/            # Configuration files
-└── docs/              # Documentation
+├── app/                    # Next.js app directory
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page
+├── components/            # React components
+│   ├── ui/               # shadcn/ui components
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   └── badge.tsx
+│   └── EtherLandingPage.tsx
+├── lib/                  # Utility functions
+│   └── utils.ts
+└── public/              # Static assets
 ```
 
-## Setup Instructions
+## Available Scripts
 
-### Prerequisites
-- Python 3.8+
-- Node.js 16+
-- npm or yarn
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-### Backend Setup
-```bash
-cd backend
-pip install -r requirements.txt
-python app.py
-```
+## Customization
 
-### Frontend Setup
-```bash
-cd frontend
-npm install
-npm start
-```
+The landing page is fully customizable through:
+- Tailwind CSS classes for styling
+- Component props for functionality
+- CSS variables for theming
 
-## Usage
+## Deployment
 
-1. Configure trading parameters in the web interface
-2. Set up external data sources (market data, news feeds)
-3. Enable AI learning mode
-4. Monitor trades and performance in real-time
-5. Review AI insights and strategy recommendations
-
-## Security Notice
-
-⚠️ **Important**: This is a demo/training platform. Do not use with real money without proper testing and risk management.
+This project can be deployed to:
+- Vercel (recommended)
+- Netlify
+- Any static hosting service
 
 ## License
 
