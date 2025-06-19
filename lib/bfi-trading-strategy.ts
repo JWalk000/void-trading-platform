@@ -1,5 +1,5 @@
 import { TechnicalAnalysis } from './technical-analysis';
-import { BrokerAPIs } from './broker-apis';
+import { brokerAPIService } from './broker-apis';
 
 export interface BFIFootprint {
   id: string;
@@ -59,13 +59,18 @@ export interface MonthlyBias {
 
 export class BFITradingStrategy {
   private technicalAnalysis: TechnicalAnalysis;
-  private brokerAPIs: BrokerAPIs;
+  private brokerAPIs;
   private monthlyBiases: Map<string, MonthlyBias> = new Map();
   private activeSetups: Map<string, BFISetup> = new Map();
+  private brokerConfig: any = null;
 
   constructor() {
     this.technicalAnalysis = new TechnicalAnalysis();
-    this.brokerAPIs = new BrokerAPIs();
+    this.brokerAPIs = brokerAPIService;
+  }
+
+  setBrokerConfig(config: any) {
+    this.brokerConfig = config;
   }
 
   /**
@@ -85,7 +90,8 @@ export class BFITradingStrategy {
     const zones = this.identifyMonthlyZones(recentData);
     
     // Determine current bias based on price position relative to zones
-    const currentPrice = recentData[recentData.length - 1].close;
+    if (!this.brokerConfig) throw new Error('Broker config not set');
+    const currentPrice = await this.brokerAPIs.getCurrentPrice(this.brokerConfig, instrument);
     let bias: 'bullish' | 'bearish' | 'potentially_reversing' = 'potentially_reversing';
     
     // Check if price is in a buy zone
@@ -354,7 +360,8 @@ export class BFITradingStrategy {
     const footprints = await this.findValidFootprints(instrument, '4H', 200);
     
     // Get current price
-    const currentPrice = await this.brokerAPIs.getCurrentPrice(instrument);
+    if (!this.brokerConfig) throw new Error('Broker config not set');
+    const currentPrice = await this.brokerAPIs.getCurrentPrice(this.brokerConfig, instrument);
     
     // Check each footprint for first retest opportunity
     for (const footprint of footprints) {
@@ -619,7 +626,8 @@ export class BFITradingStrategy {
   async executeSetup(setup: BFISetup, positionSize: number): Promise<boolean> {
     try {
       // Validate setup is still valid
-      const currentPrice = await this.brokerAPIs.getCurrentPrice(setup.instrument);
+      if (!this.brokerConfig) throw new Error('Broker config not set');
+      const currentPrice = await this.brokerAPIs.getCurrentPrice(this.brokerConfig, setup.instrument);
       
       if (currentPrice < setup.entryRange.floor || currentPrice > setup.entryRange.base) {
         console.log('Setup no longer valid - price outside range');
@@ -655,7 +663,8 @@ export class BFITradingStrategy {
    */
   async monitorSetups(): Promise<void> {
     for (const [setupId, setup] of this.activeSetups) {
-      const currentPrice = await this.brokerAPIs.getCurrentPrice(setup.instrument);
+      if (!this.brokerConfig) throw new Error('Broker config not set');
+      const currentPrice = await this.brokerAPIs.getCurrentPrice(this.brokerConfig, setup.instrument);
       
       // Check if stop loss hit
       if (setup.footprint.direction === 'bullish' && currentPrice <= setup.stopLoss) {
@@ -686,7 +695,8 @@ export class BFITradingStrategy {
     
     try {
       // Close the position
-      await this.brokerAPIs.closePosition(setup.instrument);
+      if (!this.brokerConfig) throw new Error('Broker config not set');
+      await this.brokerAPIs.closePosition(this.brokerConfig, setup.instrument);
       
       setup.status = 'completed';
       console.log(`BFI setup closed: ${setupId} - ${reason}${targetNumber ? ` (Target ${targetNumber})` : ''}`);

@@ -83,7 +83,8 @@ export default function BrokerConnectionModal({ isOpen, onClose, onConnect }: Br
     secretKey: "",
     passphrase: "",
     baseUrl: "",
-    environment: "demo"
+    environment: "demo",
+    accountId: ""
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,6 +93,13 @@ export default function BrokerConnectionModal({ isOpen, onClose, onConnect }: Br
       [e.target.name]: e.target.value,
     })
   }
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setConfig({
+      ...config,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleConnect = async () => {
     setIsLoading(true)
@@ -138,7 +146,7 @@ export default function BrokerConnectionModal({ isOpen, onClose, onConnect }: Br
                 id="environment"
                 name="environment"
                 value={config.environment}
-                onChange={handleInputChange}
+                onChange={handleSelectChange}
                 className="w-full p-2 border rounded-md"
               >
                 <option value="demo">Demo/Testnet</option>
@@ -189,7 +197,7 @@ export default function BrokerConnectionModal({ isOpen, onClose, onConnect }: Br
                 id="environment"
                 name="environment"
                 value={config.environment}
-                onChange={handleInputChange}
+                onChange={handleSelectChange}
                 className="w-full p-2 border rounded-md"
               >
                 <option value="demo">Sandbox</option>
@@ -229,7 +237,7 @@ export default function BrokerConnectionModal({ isOpen, onClose, onConnect }: Br
                 id="environment"
                 name="environment"
                 value={config.environment}
-                onChange={handleInputChange}
+                onChange={handleSelectChange}
                 className="w-full p-2 border rounded-md"
               >
                 <option value="demo">Demo</option>
@@ -289,7 +297,7 @@ export default function BrokerConnectionModal({ isOpen, onClose, onConnect }: Br
                 id="environment"
                 name="environment"
                 value={config.environment}
-                onChange={handleInputChange}
+                onChange={handleSelectChange}
                 className="w-full p-2 border rounded-md"
               >
                 <option value="demo">Demo</option>
@@ -339,7 +347,7 @@ export default function BrokerConnectionModal({ isOpen, onClose, onConnect }: Br
                 id="environment"
                 name="environment"
                 value={config.environment}
-                onChange={handleInputChange}
+                onChange={handleSelectChange}
                 className="w-full p-2 border rounded-md"
               >
                 <option value="demo">Demo</option>

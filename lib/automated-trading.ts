@@ -1,7 +1,7 @@
 import { prisma } from './prisma'
 import { brokerAPIService } from './broker-apis'
 import { TechnicalAnalysis, OHLCV, TradingSignal } from './technical-analysis'
-import cron from 'node-cron'
+import cron, { ScheduledTask } from 'node-cron'
 
 export interface StrategyConfig {
   id: number
@@ -20,7 +20,7 @@ export interface StrategyConfig {
 }
 
 export class AutomatedTradingEngine {
-  private runningStrategies: Map<number, cron.ScheduledTask> = new Map()
+  private runningStrategies: Map<number, ScheduledTask> = new Map()
 
   async startStrategy(strategyId: number): Promise<boolean> {
     try {
@@ -42,7 +42,6 @@ export class AutomatedTradingEngine {
       const task = cron.schedule(cronExpression, async () => {
         await this.executeStrategy(strategy)
       }, {
-        scheduled: true,
         timezone: "UTC"
       })
 
@@ -144,8 +143,7 @@ export class AutomatedTradingEngine {
       }
 
       // Fetch OHLCV data from broker
-      const exchange = brokerAPIService.getExchange(brokerConfig)
-      const ohlcv = await exchange.fetchOHLCV(symbol, timeframe, undefined, 100)
+      const ohlcv = await brokerAPIService.getHistoricalData(brokerConfig, symbol, timeframe, 100)
 
       if (!ohlcv || ohlcv.length === 0) {
         return null
@@ -191,7 +189,7 @@ export class AutomatedTradingEngine {
       const orderRequest = {
         symbol: strategy.symbol,
         side: signal.action.toLowerCase() as 'buy' | 'sell',
-        type: 'market',
+        type: 'market' as 'market',
         amount: positionSize
       }
 

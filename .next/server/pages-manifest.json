@@ -1,1 +1,18 @@
-{}
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/api/auth/register": "pages/api/auth/register.js",
+  "/api/bfi/automated-trading": "pages/api/bfi/automated-trading.js",
+  "/api/auth/login": "pages/api/auth/login.js",
+  "/api/bfi/execute": "pages/api/bfi/execute.js",
+  "/api/bfi/setups": "pages/api/bfi/setups.js",
+  "/api/bfi/monthly-bias": "pages/api/bfi/monthly-bias.js",
+  "/api/broker/balance": "pages/api/broker/balance.js",
+  "/api/broker/connect": "pages/api/broker/connect.js",
+  "/api/bot/tradelocker": "pages/api/bot/tradelocker.js",
+  "/api/broker/oanda": "pages/api/broker/oanda.js",
+  "/api/broker/tradelocker": "pages/api/broker/tradelocker.js",
+  "/api/crypto/order": "pages/api/crypto/order.js",
+  "/api/crypto/price": "pages/api/crypto/price.js",
+  "/_document": "pages/_document.js"
+}

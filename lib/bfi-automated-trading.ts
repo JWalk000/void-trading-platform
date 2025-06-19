@@ -132,7 +132,8 @@ export class BFIAutomatedTrading {
     const tradeEntries = Array.from(this.activeTrades.entries());
     for (const [tradeId, trade] of tradeEntries) {
       try {
-        const currentPrice = await this.brokerAPIs.getCurrentPrice(trade.instrument);
+        if (!this.brokerConfig) throw new Error('Broker config not set');
+        const currentPrice = await this.brokerAPIs.getCurrentPrice(this.brokerConfig, trade.instrument);
         
         // Check stop loss
         if (this.isStopLossHit(trade, currentPrice)) {
@@ -232,7 +233,8 @@ export class BFIAutomatedTrading {
    */
   private async validateSetup(storedSetup: any): Promise<boolean> {
     try {
-      const currentPrice = await this.brokerAPIs.getCurrentPrice(storedSetup.instrument);
+      if (!this.brokerConfig) throw new Error('Broker config not set');
+      const currentPrice = await this.brokerAPIs.getCurrentPrice(this.brokerConfig, storedSetup.instrument);
       
       // Check if price is still in the entry range
       const range = storedSetup.footprint.range;
@@ -288,7 +290,8 @@ export class BFIAutomatedTrading {
     try {
       console.log(`Executing BFI setup: ${storedSetup.id}`);
 
-      const currentPrice = await this.brokerAPIs.getCurrentPrice(storedSetup.instrument);
+      if (!this.brokerConfig) throw new Error('Broker config not set');
+      const currentPrice = await this.brokerAPIs.getCurrentPrice(this.brokerConfig, storedSetup.instrument);
       const positionSize = this.calculatePositionSize(storedSetup);
 
       // Place the order

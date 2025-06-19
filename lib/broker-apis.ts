@@ -230,6 +230,32 @@ class BrokerAPIService {
       throw new Error('Failed to fetch markets')
     }
   }
+
+  async getHistoricalData(brokerConfig: BrokerConfig, symbol: string, timeframe: string, limit: number = 100): Promise<any[]> {
+    try {
+      const exchange = this.getExchange(brokerConfig);
+      const ohlcv = await exchange.fetchOHLCV(symbol, timeframe, undefined, limit);
+      return ohlcv.map((candle: any) => ({
+        timestamp: candle[0],
+        open: candle[1],
+        high: candle[2],
+        low: candle[3],
+        close: candle[4],
+        volume: candle[5],
+      }));
+    } catch (error) {
+      console.error('Failed to fetch historical data:', error);
+      throw new Error('Failed to fetch historical data');
+    }
+  }
+
+  async getCurrentPrice(brokerConfig: BrokerConfig, symbol: string): Promise<number> {
+    const ticker = await this.getTicker(brokerConfig, symbol);
+    if (typeof ticker.price !== 'number') {
+      throw new Error('Price data unavailable');
+    }
+    return ticker.price;
+  }
 }
 
 export const brokerAPIService = new BrokerAPIService() 
